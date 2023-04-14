@@ -1,149 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
- 
-struct tree 
+/* A binary tree node has data, pointer to left child
+and a pointer to right child */
+struct node {
+	char data;
+	struct node* left;
+	struct node* right;
+	struct node* next;
+};
+struct node *head=NULL;
+/* Helper function that allocates a new node with the
+given data and NULL left and right pointers. */
+struct node* newNode(char data)
 {
- 	char data; 
-	struct tree *left, *right;  
-};   
-  
-int top = -1; 
-struct tree * stack[20]; 
-struct tree * root1; 
-struct tree * stack2[20];
-  
-void push(struct tree * root) 
+	struct node* node
+		= (struct node*)malloc(sizeof(struct node));
+	node->data = data;
+	node->left = NULL;
+	node->right = NULL;
+	node->next = NULL;
+	
+	return (node);
+}
+void printInorder(struct node* node)
 {
-	top=top+1;
-	stack[top] = root;
-	printf("\nstack data: %x\n", stack[top]);
-}    
+	if (node == NULL)
+		return;
+	else{
+	/* first recur on left child */
+	printInorder(node->left);
 
-struct tree * pop() 
-{ 
-	return (stack[top--]);
-}  
+	/* then print the data of node */
+	printf("%c ", node->data);
 
-void preorder_nr(struct tree *root) 
-{ 
-	while(st)
+	/* now recur on right child */
+	printInorder(node->right);
+	}
+}
+
+void push(struct node* x)
+{
+	if(head==NULL)
+	head = x;
 	else
 	{
-		if (root != NULL)
-		{
-			preorder(root->left);
-		}
-		preorder(root->right);
-		printf("%c", root->data);
+		x->next = head;
+		head = x;
 	}
+	// struct node* temp;
+	// while(temp!=NULL)
+	// {
+	//	 printf("%c ", temp->data);
+	//	 temp = temp->next;
+	// }
 }
-
-void preorder(struct tree *root) 
-{ 
-	if(root==NULL) 
-	{ 
-		return; 
-	} 
-	else
-	{
-		if (root != NULL)
-		{
-			preorder(root->left);
-		}
-		preorder(root->right);
-		printf("%c", root->data);
-	}
-}
-
-void inorder(struct tree *root) 
-{ 
-	if(root==NULL) 
-	{ 
-		return; 
-	} 
-	else
-	{
-		if (root != NULL)
-		{
-			inorder(root->left);
-		}
-		printf("%c", root->data);
-		inorder(root->right);
-	}
-}
-
-void postorder(struct tree *root) 
-{ 
-	if(root==NULL) 
-	{ 
-		return; 
-	} 
-	else
-	{
-		if (root != NULL)
-		{
-			printf("%c", root->data);
-		}
-		postorder(root->left);
-		postorder(root->right);
-	}
-}
-
-void operand(char b) 
+struct node* pop()
 {
-	struct tree * root;
-	root = (struct tree *) malloc (sizeof(struct tree));
-	root->data = b;
-	root->left = NULL;
-	root->right = NULL;
-	printf("\n%c", root->data);
-	printf("\noperand Address:%x", root);
-	push(root);
+	// Popping out the top most[ pointed with head] element
+	struct node* p = head;
+	head = head->next;
+	return p;
 }
+void inorderTraversal(struct node* root) {
+    struct node* stack[100];
+    int top = -1;
 
-void operators(char a) 
+    while (1) {
+        while (root) {
+            stack[++top] = root;
+            root = root->left;
+        }
+
+        if (top < 0)
+            return;
+
+        root = stack[top--];
+        printf("%c ", root->data);
+
+        root = root->right;
+    }
+}
+void preorderTraversal(struct node* root) {
+    struct node* stack[100];
+    int top = -1;
+
+    if (root == NULL)
+        return;
+
+    stack[++top] = root;
+
+    while (top >= 0) {
+        root = stack[top--];
+        printf("%c ", root->data);
+
+        if (root->right)
+            stack[++top] = root->right;
+        if (root->left)
+            stack[++top] = root->left;
+    }
+}
+int main()
 {
-	struct tree * root;
-	root = (struct tree *) malloc (sizeof(struct tree));
-	root->data = a;
-	printf("\noperator data:%c", root->data);
-	root->right = pop();
-	root->left = pop();
-	push(root);
-} 
-
-int main() 
-{ 
-	int i=0, p, k, ans; 
-	char s[20]; 
-	printf("Enter the expression in postfix form \n"); 
-	scanf("%s", s); 
-	while(s[i]!='\0') 
-	{
-		if(isalnum(s[i]))
-		{
-			printf("\noperand:%c",s[i]); 
-			operand(s[i]); 
+	char s[] = {'A','B','C','*','+','D','/'};
+	int l = sizeof(s) / sizeof(s[0]) ;
+	struct node *x, *y, *z;
+	for (int i = 0; i < l; i++) {
+		// if read character is operator then popping two
+		// other elements from stack and making a binary
+		// tree
+		if (s[i] == '+' || s[i] == '-' || s[i] == '*'
+			|| s[i] == '/' || s[i] == '^') {
+			z = newNode(s[i]);
+			x = pop();
+			y = pop();
+			z->left = y;
+			z->right = x;
+			push(z);
 		}
-		else
-		{
-			printf("\noperator:%c",s[i]); 
-			operators(s[i]); 
+		else {
+			z = newNode(s[i]);
+			push(z);
 		}
-		i++; 
 	}
-	printf("\nrecursive\n"); 
-	printf("\nThe preorder traversal of the tree is \n"); 
-	preorder(stack[top]);
-	printf("\nThe inorder traversal of the tree is \n"); 
-	inorder(stack[top]); 
-	printf("\nThe postorder traversal of the tree is \n"); 
-	postorder(stack[top]);
-	printf("\nnon-recursive\n"); 
-	printf("\nThe preorder traversal of the tree is \n"); 
-	preorder_nr(stack[top]);
-	return 0; 
+	printf(" The Inorder Traversal of Expression Tree: ");
+inorderTraversal(z);
+//	printInorder(z);
+printf(" \nThe Preorder Traversal of Expression Tree: ");
+preorderTraversal(z);
+	return 0;
 }
-
