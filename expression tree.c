@@ -100,6 +100,32 @@ void preorderTraversal(struct node* root) {
             stack[++top] = root->left;
     }
 }
+void postorderTraversal(struct node* root) {
+    struct node* stack1[100];
+    struct node* stack2[100];
+    int top1 = -1;
+    int top2 = -1;
+
+    if (root == NULL)
+        return;
+
+    stack1[++top1] = root;
+
+    while (top1 >= 0) {
+        root = stack1[top1--];
+        stack2[++top2] = root;
+
+        if (root->left)
+            stack1[++top1] = root->left;
+        if (root->right)
+            stack1[++top1] = root->right;
+    }
+
+    while (top2 >= 0) {
+        root = stack2[top2--];
+        printf("%c ", root->data);
+    }
+}
 int main()
 {
 	char s[] = {'A','B','C','*','+','D','/'};
@@ -128,5 +154,7 @@ inorderTraversal(z);
 //	printInorder(z);
 printf(" \nThe Preorder Traversal of Expression Tree: ");
 preorderTraversal(z);
+printf(" \nThe Postorder Traversal of Expression Tree: ");
+postorderTraversal(z);
 	return 0;
 }
