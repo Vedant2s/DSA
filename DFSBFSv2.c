@@ -1,99 +1,92 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
-#define MAX_VERTICES 100
+#define MAX_VERTICES 50
 
-// Graph data structure
-struct Graph {
-    int numVertices;
-    int** adjMatrix;
-};
+// This struct represents a directed graph using
+// adjacency list representation
+typedef struct Graph_t {
+	int V; // No. of vertices
+	bool adj[MAX_VERTICES][MAX_VERTICES];
+} Graph;
 
-// Function to create a new graph
-struct Graph* createGraph(int numVertices) {
-    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
-    graph->numVertices = numVertices;
+// Constructor
+Graph* Graph_create(int V)
+{
+	Graph* g = malloc(sizeof(Graph));
+	g->V = V;
 
-    // Allocate memory for adjacency matrix
-    graph->adjMatrix = (int**)malloc(numVertices * sizeof(int*));
-    for (int i = 0; i < numVertices; i++) {
-        graph->adjMatrix[i] = (int*)malloc(numVertices * sizeof(int));
-        for (int j = 0; j < numVertices; j++)
-            graph->adjMatrix[i][j] = 0;
-    }
+	for (int i = 0; i < V; i++) {
+		for (int j = 0; j < V; j++) {
+			g->adj[i][j] = false;
+		}
+	}
 
-    return graph;
+	return g;
 }
 
-// Function to add an edge to the graph
-void addEdge(struct Graph* graph, int src, int dest) {
-    graph->adjMatrix[src][dest] = 1;
-    graph->adjMatrix[dest][src] = 1;
+// Destructor
+void Graph_destroy(Graph* g) { free(g); }
+
+// function to add an edge to graph
+void Graph_addEdge(Graph* g, int v, int w)
+{
+	g->adj[v][w] = true; // Add w to v’s list.
 }
 
-// Function to perform DFS traversal of the graph
-void DFS(struct Graph* graph, int startVertex, bool visited[]) {
-    visited[startVertex] = true;
-    printf("%d ", startVertex);
+// prints BFS traversal from a given source s
+void Graph_BFS(Graph* g, int s)
+{
+	// Mark all the vertices as not visited
+	bool visited[MAX_VERTICES];
+	for (int i = 0; i < g->V; i++) {
+		visited[i] = false;
+	}
 
-    for (int i = 0; i < graph->numVertices; i++) {
-        if (graph->adjMatrix[startVertex][i] == 1 && !visited[i]) {
-            DFS(graph, i, visited);
-        }
-    }
+	// Create a queue for BFS
+	int queue[MAX_VERTICES];
+	int front = 0, rear = 0;
+
+	// Mark the current node as visited and enqueue it
+	visited[s] = true;
+	queue[rear++] = s;
+
+	while (front != rear) {
+		// Dequeue a vertex from queue and print it
+		s = queue[front++];
+		printf("%d ", s);
+
+		// Get all adjacent vertices of the dequeued
+		// vertex s. If a adjacent has not been visited,
+		// then mark it visited and enqueue it
+		for (int adjacent = 0; adjacent < g->V;
+			adjacent++) {
+			if (g->adj[s][adjacent] && !visited[adjacent]) {
+				visited[adjacent] = true;
+				queue[rear++] = adjacent;
+			}
+		}
+	}
 }
 
-// Function to perform BFS traversal of the graph
-void BFS(struct Graph* graph, int startVertex, bool visited[]) {
-    // Create a queue for BFS traversal
-    int queue[MAX_VERTICES];
-    int front = -1, rear = -1;
+// Driver program to test methods of graph struct
+int main()
+{
+	// Create a graph given in the above diagram
+	Graph* g = Graph_create(4);
+	Graph_addEdge(g, 0, 1);
+	Graph_addEdge(g, 0, 2);
+	Graph_addEdge(g, 1, 2);
+	Graph_addEdge(g, 2, 0);
+	Graph_addEdge(g, 2, 3);
+	Graph_addEdge(g, 3, 3);
 
-    visited[startVertex] = true;
-    queue[++rear] = startVertex;
+	printf("Following is Breadth First Traversal "
+		"(starting from vertex 2) \n");
+	Graph_BFS(g, 2);
 
-    while (front != rear) {
-        startVertex = queue[++front];
-        printf("%d ", startVertex);
+	Graph_destroy(g);
 
-        for (int i = 0; i < graph->numVertices; i++) {
-            if (graph->adjMatrix[startVertex][i] == 1 && !visited[i]) {
-                visited[i] = true;
-                queue[++rear] = i;
-            }
-        }
-    }
-}
-
-// Main function
-int main() {
-    int numVertices = 5;
-    struct Graph* graph = createGraph(numVertices);
-
-    // Add edges to the graph
-    addEdge(graph, 0, 1);
-    addEdge(graph, 0, 2);
-    addEdge(graph, 1, 2);
-    addEdge(graph, 2, 3);
-    addEdge(graph, 3, 4);
-    //addEdge(graph, 4, 4);
-
-    // Perform DFS and BFS traversal of the graph
-    bool visited[numVertices];
-    for (int i = 0; i < numVertices; i++)
-        visited[i] = false;
-
-    printf("DFS Traversal: ");
-    DFS(graph, 0, visited);
-    printf("\n");
-
-    for (int i = 0; i < numVertices; i++)
-        visited[i] = false;
-
-    printf("BFS Traversal: ");
-    BFS(graph, 0, visited);
-    printf("\n");
-
-    return 0;
+	return 0;
 }
