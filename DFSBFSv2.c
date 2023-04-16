@@ -10,6 +10,29 @@ typedef struct Graph_t {
 	int V; // No. of vertices
 	bool adj[MAX_VERTICES][MAX_VERTICES];
 } Graph;
+// utility function for DFS
+void Graph_DFSUtil(Graph* g, int v, bool visited[]) {
+    // Mark the current node as visited and print it
+    visited[v] = true;
+    printf("%d ", v);
+ 
+    // Recur for all the vertices adjacent to this vertex
+    for (int i = 0; i < g->V; i++)
+        if (g->adj[v][i] && !visited[i])
+            Graph_DFSUtil(g, i, visited);
+}
+ 
+// DFS traversal of the vertices reachable from v
+// It uses recursive DFSUtil()
+void Graph_DFS(Graph* g, int v) {
+    // Mark all the vertices as not visited
+    bool visited[g->V];
+    for (int i = 0; i < g->V; i++)
+        visited[i] = false;
+ 
+    // Call the recursive helper function to print DFS traversal
+    Graph_DFSUtil(g, v, visited);
+}
 
 // Constructor
 Graph* Graph_create(int V)
@@ -85,7 +108,9 @@ int main()
 	printf("Following is Breadth First Traversal "
 		"(starting from vertex 2) \n");
 	Graph_BFS(g, 2);
-
+	printf("\nFollowing is Depth First Traversal "
+		"(starting from vertex 2) \n");
+    Graph_DFS(g,2);
 	Graph_destroy(g);
 
 	return 0;
