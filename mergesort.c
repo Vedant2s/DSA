@@ -22,8 +22,8 @@ void merge_s(int a[],int b,int e){
     int mid;
     if(b<e){
         mid=(b+e)/2;
-        merge_s(a,b,mid);
-        merge_s(a,mid+1,e);
+        //merge_s(a,b,mid);
+        //merge_s(a,mid+1,e);
         merge(a,b,mid,e);
     }
     
