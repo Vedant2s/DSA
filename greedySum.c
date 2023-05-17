@@ -1,4 +1,3 @@
-// Online C compiler to run C program online
 #include <stdio.h>
 
 int main() {
@@ -27,7 +26,8 @@ int main() {
         }
         count++;
         if(count<10&&i==9){
-            visited[count]=0;
+            for(int t=0;t<10;t++)
+            visited[t]=0;
             i=count;
            
         }
