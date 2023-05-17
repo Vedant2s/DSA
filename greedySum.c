@@ -4,7 +4,7 @@
 int main() {
     // Write C code here
     //printf("Hello world");
-    int arr[10]={100,100,50,50,25,25,20,10,5,5};
+    int arr[10]={100,100,50,50,25,25,20,10,5,5};//make the array in descending order
     int sum=0,count=0;
     int visited[10]={};
     for(int i=0;i<10;i++){
