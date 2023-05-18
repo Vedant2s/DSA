@@ -4,6 +4,7 @@ void insert (int d);
 void swap(int *a,int *b);
 void heapify(int i,int size);
     int a[10]={};
+    void heap_sort ();
     //maxheap 
 int main()
 {
@@ -13,20 +14,26 @@ int main()
     insert(2);
     insert(5);
     insert(4);
-    for(int i=0;i<10;i++)
-     printf("%d ",a[i]);
+    printf("The max heap is :: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", a[i]);
+    }
+    heap_sort();
+    printf("\nThe sorted array is :: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", a[i]);
+    }
     return 0;
 }
 void insert (int d){
-    if(size==0){
-        a[size++]=d;
+       int i = size;
+    a[i] = d;
+    size++;
+    while (i > 0 && a[(i - 1) / 2] < a[i]) {
+        swap(&a[(i - 1) / 2], &a[i]);
+        i = (i - 1) / 2;
     }
-    else{
-    a[size++]=d;
-    for(int i=size/2-1;i>=0;i--){
-        heapify(i,size);
-    }
-    }
+    
     
 }
 void swap(int *a1,int *b){
@@ -39,12 +46,21 @@ void heapify(int i,int size){
     int left,right;
     left=2*i+1;
     right=2*i+2;
-    if(left<=size&&a[max]<a[left])
+    if(left<size&&a[max]<a[left])
     max=left;
-    if(right<=size&&a[max]<a[right])
+    if(right<size&&a[max]<a[right])
     max=right;
     if(max!=i){
         swap(&a[max],&a[i]);
         heapify(max,size);
+    }
+}
+void heap_sort () 
+{
+    int i,t;
+    for (i=size-1 ; i>=0 ; i--)
+    {
+        swap(&a[0], &a[i]);
+        heapify (0,i);
     }
 }
